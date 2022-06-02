@@ -1,14 +1,30 @@
 import './App.css';
 import Navigation from './components/Navigation/Navigation.js';
+import React, { Component } from 'react';
 import Logo from './components/Logo/Logo.js';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm.js';
 import Rank from './components/Rank/Rank.js';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 
-function App() {
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      input: '',
+    }
+  }
 
-  const particlesInit = async (main) => {
+  onInputChange = (event) => {
+    console.log(event.target.value);
+  }
+
+  onButtonSubmit = (event) => {
+    console.log('click');
+  }
+  
+
+  particlesInit = async (main) => {
     console.log(main);
 
     // you can initialize the tsParticles instance (main) here, adding custom shapes or presets
@@ -19,11 +35,11 @@ function App() {
     await loadFull(main);
   };
 
-  const particlesLoaded = (container) => {
+  particlesLoaded = (container) => {
     console.log(container);
   };
 
-  const particlesOptions = {
+  particlesOptions = {
       background: {
         color: {
           value: "#0d47a1",
@@ -73,7 +89,7 @@ function App() {
             default: "bounce",
           },
           random: false,
-          speed: 6,
+          speed: 2,
           straight: false,
         },
         number: {
@@ -96,22 +112,26 @@ function App() {
       detectRetina: true,
   }
 
-  return (
-    <div>
-      <Particles
-        className='particles'
-        id="tsparticles"
-        init={particlesInit}
-        loaded={particlesLoaded}
-        options={particlesOptions}
-      />
-      <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm />
-      {/* <FaceRecognition /> */}
-    </div>
-  );
+  render() {
+    return (
+      <div className='App'>
+        <Particles
+          className='particles'
+          id="tsparticles"
+          init={this.particlesInit}
+          loaded={this.particlesLoaded}
+          options={this.particlesOptions}
+        />
+        <Navigation />
+        <Logo />
+        <Rank />
+        <ImageLinkForm 
+          onInputChange={this.onInputChange} 
+          onButtonSubmit={this.onButtonSubmit}/>
+        {/* <FaceRecognition /> */}
+      </div>
+    );
+  }
 }
 
 export default App;
