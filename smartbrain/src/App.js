@@ -29,6 +29,12 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    fetch('http://localhost:3000')
+      .then(response => response.json())
+      .then(console.log)
+  }
+
   particlesInit = async (main) => {
     await loadFull(main);
   };
@@ -159,7 +165,7 @@ class App extends Component {
           options={this.particlesOptions}
         />
         <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
-        { route === 'home' 
+        {route === 'home' 
           ? <div>
               <Logo />
               <Rank />
@@ -168,12 +174,10 @@ class App extends Component {
                 onButtonSubmit={this.onButtonSubmit}/>
               <FaceRecognition box={box} imageUrl={imageUrl} />
             </div>
-          : (
-            route === 'signin' 
+          : (route === 'signin' 
             ? <Signin onRouteChange={this.onRouteChange}/>
             : <Register onRouteChange={this.onRouteChange}/>
           )
-
         }
       </div>
     );
