@@ -132,11 +132,27 @@ class App extends Component {
 
   // See not for using clarifai API: https://docs.clarifai.com/api-guide/predict/images
   onButtonSubmit = () => {
+    console.log(this.state.user.id);
     this.setState({ imageUrl: this.state.input });
     const requestOptions = this.apiData();
     fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/versions/" + MODEL_VERSION_ID + "/outputs", requestOptions)
     .then(response => response.text())
-    .then(result => this.displayFaceBox(this.calculateFaceLocation(JSON.parse(result))))
+    .then(result => {
+        if(result) {
+          fetch("http://localhost:3000/image", {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+               id: this.state.user.id
+            })
+          })
+          .then(response => response.json())
+          .then(count => {
+            this.setState(Object.assign(this.state.user, { entries: count }))
+          })
+      }
+      this.displayFaceBox(this.calculateFaceLocation(JSON.parse(result)))
+    })
     .catch(error => console.log('error', error));
   }
 
@@ -185,14 +201,17 @@ class App extends Component {
         {route === 'home' 
           ? <div>
               <Logo />
-              <Rank />
+              <Rank 
+                name={this.state.user.name}
+                entries={this.state.user.entries}  
+              />
               <ImageLinkForm 
                 onInputChange={this.onInputChange} 
                 onButtonSubmit={this.onButtonSubmit}/>
               <FaceRecognition box={box} imageUrl={imageUrl} />
             </div>
           : (route === 'signin' 
-            ? <Signin onRouteChange={this.onRouteChange}/>
+            ? <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
             : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
           )
         }
